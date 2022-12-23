@@ -27,6 +27,9 @@ class Member(
     @Column(name = "nickname", nullable = false)
     var nickname: String,
 
+    @Column(name = "state", nullable = false)
+    var state: Boolean,
+
     @Column(name = "image_url", nullable = false)
     var imageUrl: String,
 
@@ -36,9 +39,16 @@ class Member(
         joinColumns = [JoinColumn(name = "badge_id")]
     )
     @OrderColumn(name = "badge_idx")
-    var badges: MutableSet<Badge>
+    var badges: MutableSet<Badge> = mutableSetOf()
 
 ) : BaseEntity() {
+
+    fun saveOrAlreadyExistException(memberRepository: MemberRepository): Member {
+        if (memberRepository.existsByEmail(email)) {
+            throw AlreadyExistException(AlreadyExistException.USER_ALREADY_EXIST_EXCEPTION)
+        }
+        return memberRepository.save(this)
+    }
 
     fun updateEmail(email: String, memberRepository: MemberRepository) {
         if (memberRepository.existsByEmail(email))
@@ -62,6 +72,10 @@ class Member(
         if (this.phone == phone)
             throw UnchangedException(UnchangedException.PHONE_UNCHANGED_EXCEPTION)
         this.phone = phone
+    }
+
+    fun delete() {
+        this.state = false
     }
 
     fun firstDeal() {
