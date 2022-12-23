@@ -50,43 +50,50 @@ class Member(
         return memberRepository.save(this)
     }
 
-    fun updateEmail(email: String, memberRepository: MemberRepository) {
+    fun updateEmail(email: String, memberRepository: MemberRepository): Member {
         if (memberRepository.existsByEmail(email))
             throw AlreadyExistException(AlreadyExistException.EMAIL_ALREADY_EXIST_EXCEPTION)
         this.email = email
+        return this
     }
 
-    fun updatePassword(password: String) {
+    fun updatePassword(password: String): Member {
         if (this.password == password)
             throw UnchangedException(UnchangedException.PASSWORD_UNCHANGED_EXCEPTION)
         this.password = password
+        return this
     }
 
-    fun updateNickname(nickname: String) {
+    fun updateNickname(nickname: String): Member {
         if (this.nickname == nickname)
             throw UnchangedException(UnchangedException.NAME_UNCHANGED_EXCEPTION)
         this.nickname = nickname
+        return this
     }
 
-    fun updatePhone(phone: String) {
+    fun updatePhone(phone: String): Member {
         if (this.phone == phone)
             throw UnchangedException(UnchangedException.PHONE_UNCHANGED_EXCEPTION)
         this.phone = phone
+        return this
     }
 
     fun delete() {
         this.state = false
     }
 
-    fun firstDeal() {
+    fun firstDeal(): Member {
         this.badges.add(Badge(MemberBadgeType.FIRST_DEAL))
+        return this
     }
 
-    fun tenthDeal() {
+    fun tenthDeal(): Member {
         this.badges.add(Badge(MemberBadgeType.TENTH_DEAL))
+        return this
     }
 
-    fun freeDeal() {
+    fun freeDeal(): Member {
         this.badges.add(Badge(MemberBadgeType.FREE_DEAL))
+        return this
     }
 }

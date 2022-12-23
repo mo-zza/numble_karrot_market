@@ -16,10 +16,10 @@ class UpdateMemberService(private val memberRepository: MemberRepository) {
         if (memberInput.id != null) {
             val member = memberRepository.findById(memberInput.id)
                 .orElseThrow { throw NotFoundException(NotFoundException.USER_NOT_FOUND_EXCEPTION) }
-            member.updateEmail(memberInput.email, memberRepository)
-            member.updateNickname(memberInput.nickname)
-            member.updatePassword(memberInput.password)
-            member.updatePhone(memberInput.phone)
+                .updateEmail(memberInput.email, memberRepository)
+                .updateNickname(memberInput.nickname)
+                .updatePassword(memberInput.password)
+                .updatePhone(memberInput.phone)
             memberRepository.save(member)
         }
 
