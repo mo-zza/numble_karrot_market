@@ -27,6 +27,9 @@ class Member(
     @Column(name = "nickname", nullable = false)
     var nickname: String,
 
+    @Column(name = "state", nullable = false)
+    var state: Boolean,
+
     @Column(name = "image_url", nullable = false)
     var imageUrl: String,
 
@@ -36,43 +39,61 @@ class Member(
         joinColumns = [JoinColumn(name = "badge_id")]
     )
     @OrderColumn(name = "badge_idx")
-    var badges: MutableSet<Badge>
+    var badges: MutableSet<Badge> = mutableSetOf()
 
 ) : BaseEntity() {
 
-    fun updateEmail(email: String, memberRepository: MemberRepository) {
+    fun saveOrAlreadyExistException(memberRepository: MemberRepository): Member {
+        if (memberRepository.existsByEmail(email)) {
+            throw AlreadyExistException(AlreadyExistException.USER_ALREADY_EXIST_EXCEPTION)
+        }
+        return memberRepository.save(this)
+    }
+
+    fun updateEmail(email: String, memberRepository: MemberRepository): Member {
         if (memberRepository.existsByEmail(email))
             throw AlreadyExistException(AlreadyExistException.EMAIL_ALREADY_EXIST_EXCEPTION)
         this.email = email
+        return this
     }
 
-    fun updatePassword(password: String) {
+    fun updatePassword(password: String): Member {
         if (this.password == password)
             throw UnchangedException(UnchangedException.PASSWORD_UNCHANGED_EXCEPTION)
         this.password = password
+        return this
     }
 
-    fun updateNickname(nickname: String) {
+    fun updateNickname(nickname: String): Member {
         if (this.nickname == nickname)
             throw UnchangedException(UnchangedException.NAME_UNCHANGED_EXCEPTION)
         this.nickname = nickname
+        return this
     }
 
-    fun updatePhone(phone: String) {
+    fun updatePhone(phone: String): Member {
         if (this.phone == phone)
             throw UnchangedException(UnchangedException.PHONE_UNCHANGED_EXCEPTION)
         this.phone = phone
+        return this
     }
 
-    fun firstDeal() {
+    fun delete() {
+        this.state = false
+    }
+
+    fun firstDeal(): Member {
         this.badges.add(Badge(MemberBadgeType.FIRST_DEAL))
+        return this
     }
 
-    fun tenthDeal() {
+    fun tenthDeal(): Member {
         this.badges.add(Badge(MemberBadgeType.TENTH_DEAL))
+        return this
     }
 
-    fun freeDeal() {
+    fun freeDeal(): Member {
         this.badges.add(Badge(MemberBadgeType.FREE_DEAL))
+        return this
     }
 }
