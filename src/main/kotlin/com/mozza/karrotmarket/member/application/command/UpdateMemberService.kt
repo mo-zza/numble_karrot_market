@@ -17,10 +17,11 @@ class UpdateMemberService(private val memberRepository: MemberRepository) {
             val member = memberRepository.findById(memberInput.id)
                 .orElseThrow { throw NotFoundException(NotFoundException.USER_NOT_FOUND_EXCEPTION) }
                 .updateEmail(memberInput.email, memberRepository)
-                .updateNickname(memberInput.nickname)
-                .updatePassword(memberInput.password)
-                .updatePhone(memberInput.phone)
-            memberRepository.save(member)
+            member.updateNickname(memberInput.nickname)
+            member.updatePassword(memberInput.password)
+            member.updatePhone(memberInput.phone)
+
+            return memberRepository.save(member)
         }
 
         throw BadRequestException(" is must be have", "id")
